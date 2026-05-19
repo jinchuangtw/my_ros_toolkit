@@ -14,3 +14,5 @@ catkin_install_python(PROGRAMS scripts/degrade_gvins_bag.py DESTINATION
                       ${CATKIN_PACKAGE_BIN_DESTINATION})
 catkin_install_python(PROGRAMS scripts/fast_forward_video.py DESTINATION
                       ${CATKIN_PACKAGE_BIN_DESTINATION})
+catkin_install_python(PROGRAMS scripts/video_to_frames.py DESTINATION
+                      ${CATKIN_PACKAGE_BIN_DESTINATION})
