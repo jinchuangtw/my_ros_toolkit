@@ -165,6 +165,12 @@ def main():
     parser.add_argument("--bag", required=True, help="Input rosbag path")
 
     parser.add_argument(
+        "--topic",
+        default="/fastsam/ground_overlay",
+        help="Image topic to convert. If set, --left-topic and --right-topic will be ignored.",
+    )
+
+    parser.add_argument(
         "--left-topic",
         default="/cam0/image_raw",
         help="Left camera image topic",
@@ -178,8 +184,14 @@ def main():
 
     parser.add_argument(
         "--output-dir",
-        default="gvins_videos",
+        default="video",
         help="Directory for output videos",
+    )
+
+    parser.add_argument(
+        "--topic-name",
+        default="fastsam_overlay.mp4",
+        help="Output filename for single topic video when --topic is set.",
     )
 
     parser.add_argument(
@@ -246,34 +258,54 @@ def main():
 
     os.makedirs(args.output_dir, exist_ok=True)
 
-    left_output = os.path.join(args.output_dir, args.left_name)
-    right_output = os.path.join(args.output_dir, args.right_name)
+    if args.topic is None:
 
-    print("[INFO] Input bag:", args.bag)
-    print("[INFO] Left topic :", args.left_topic)
-    print("[INFO] Right topic:", args.right_topic)
+        left_output = os.path.join(args.output_dir, args.left_name)
+        right_output = os.path.join(args.output_dir, args.right_name)
 
-    convert_topic_to_video(
-        bag_path=args.bag,
-        topic=args.left_topic,
-        output_path=left_output,
-        fps=args.fps,
-        codec=args.codec,
-        resize=resize,
-        start_time=args.start_time,
-        duration=args.duration,
-    )
+        print("[INFO] Input bag:", args.bag)
+        print("[INFO] Left topic :", args.left_topic)
+        print("[INFO] Right topic:", args.right_topic)
 
-    convert_topic_to_video(
-        bag_path=args.bag,
-        topic=args.right_topic,
-        output_path=right_output,
-        fps=args.fps,
-        codec=args.codec,
-        resize=resize,
-        start_time=args.start_time,
-        duration=args.duration,
-    )
+        convert_topic_to_video(
+            bag_path=args.bag,
+            topic=args.left_topic,
+            output_path=left_output,
+            fps=args.fps,
+            codec=args.codec,
+            resize=resize,
+            start_time=args.start_time,
+            duration=args.duration,
+        )
+
+        convert_topic_to_video(
+            bag_path=args.bag,
+            topic=args.right_topic,
+            output_path=right_output,
+            fps=args.fps,
+            codec=args.codec,
+            resize=resize,
+            start_time=args.start_time,
+            duration=args.duration,
+        )
+
+    else:
+
+        output = os.path.join(args.output_dir, args.topic_name)
+
+        print("[INFO] Input bag:", args.bag)
+        print("[INFO] Topic     :", args.topic)
+
+        convert_topic_to_video(
+            bag_path=args.bag,
+            topic=args.topic,
+            output_path=output,
+            fps=args.fps,
+            codec=args.codec,
+            resize=resize,
+            start_time=args.start_time,
+            duration=args.duration,
+        )
 
 
 if __name__ == "__main__":
